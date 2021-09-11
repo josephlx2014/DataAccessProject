@@ -18,12 +18,37 @@ namespace DataAccessProject
             {
                 try
                 {
+                    dbConnection.Open();
+                    ltConnectionMessage.Text = "Connection Succesful";
+
+                    try {
+
+                        SqlCommand cmd = new SqlCommand("SELECT hex, name FROM Color",dbConnection);
+                        SqlDataReader reader = cmd.ExecuteReader();
+
+                        if (reader.HasRows) {
+                            while (reader.Read()) {
+                                ltOutput.Text += string.Format("<li style=\"color:#{0}\">{1}</li>", reader.GetString(0),reader.GetString(1));
+                            }
+                        }
+
+                    }
+                    catch (SqlException ex){
+
+                        ltOutput.Text = "<li> Error: " + ex.Message + "</li>";
+                    }
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    ltConnectionMessage.Text = "Connection failed: " + ex.Message;
+                   
+                }
 
-                    throw;
+                finally 
+                {
+                    dbConnection.Close();
+                    dbConnection.Dispose();
                 }
 
             }
